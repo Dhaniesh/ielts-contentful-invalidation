@@ -1,6 +1,6 @@
 # Cache Invalidation Workflow (AWS Step Functions)
 
-## Overview
+## Overview 🧭
 
 This document provides a high-level understanding of the **Cache Invalidation Workflow** orchestrated using **AWS Step Functions**. It outlines the purpose, flow, and implementation details suitable for software engineers integrating or maintaining this workflow.
 
@@ -9,43 +9,43 @@ This document provides a high-level understanding of the **Cache Invalidation Wo
 
 ---
 
-## Purpose
+## Purpose 🎯
 
 The goal of this workflow is to **invalidate cached content (e.g., in a CDN like CloudFront)** for specific resources after they are updated, ensuring end-users always receive the most recent data.
 
 ---
 
-## Flow Summary
+## Flow Summary 🔁
 
 1. A **child component** is published in **Contentful**.
 2. A **webhook** is triggered, sending the **child ID** to an API endpoint or directly to the **Step Function**.
 3. The **Step Function execution** starts.
-4. The execution fetches **parent component IDs** related to the child.
+4. The execution lambda fetches **parent component IDs** related to the child.
 5. A **CloudFront invalidation request** is created for the affected paths.
 6. The state machine continues with its polling-based workflow until the invalidation completes.
 
 ---
 
-## Workflow Summary
+## Workflow Summary 📈
 
 This is a polling-based Step Function that:
 
 1. Triggers a cache invalidation for linked resources.
 2. Waits for a fixed interval.
 3. Checks the status of the invalidation.
-4. Repeats until completion.
-5. Ends gracefully.
+4. Repeats until all invalidations are complete.
+5. Exits.
 
 ---
 
-## State Machine Steps
+## State Machine Steps ⚙️
 
 ![State Machine Workflow](https://github.com/Dhaniesh/ielts-contentful-invalidation/blob/main/step-function.jpg)
 
 ### 1. **Linked-Resource-Cache-Invalidation**
 
 * Initiates the cache invalidation request for one or more resources.
-* Likely invokes a Lambda function or API call.
+* Invokes a Lambda function.
 
 ### 2. **Wait-For-1-Min**
 
@@ -67,7 +67,6 @@ This is a polling-based Step Function that:
 ### 5. **Check-Invalidation-Completion**
 
 * Final confirmation logic.
-* Can include validation, logging, or sending a completion event.
 
 ### 6. **EndInvalidation**
 
@@ -75,15 +74,14 @@ This is a polling-based Step Function that:
 
 ---
 
-## Benefits
+## Benefits ✅
 
 * Ensures cache consistency across CDN layers.
-* Prevents unnecessary duplication of invalidation jobs.
-* Scalable and fault-tolerant with native AWS services.
+* Prevents unnecessary invalidation of resources.
 
 ---
 
-## Technologies Used
+## Technologies Used 🧰
 
 * **AWS Step Functions** – Workflow orchestration
 * **AWS Lambda** – (Optional) For status checks or triggering invalidation
