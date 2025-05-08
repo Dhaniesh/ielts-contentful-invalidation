@@ -5,7 +5,7 @@
 This document provides a high-level understanding of the **Cache Invalidation Workflow** orchestrated using **AWS Step Functions**. It outlines the purpose, flow, and implementation details suitable for software engineers integrating or maintaining this workflow.
 
 
-![State Machine Workflow](https://github.com/Dhaniesh/ielts-contentful-invalidation/cdn-architecture.jpg)
+![State Machine Workflow](https://github.com/Dhaniesh/ielts-contentful-invalidation/blob/main/cdn-architecture.jpg)
 
 ---
 
@@ -40,7 +40,7 @@ This is a polling-based Step Function that:
 
 ## State Machine Steps
 
-![State Machine Workflow](https://github.com/Dhaniesh/ielts-contentful-invalidation/step-function.jpg)
+![State Machine Workflow](https://github.com/Dhaniesh/ielts-contentful-invalidation/blob/main/step-function.jpg)
 
 ### 1. **Linked-Resource-Cache-Invalidation**
 
