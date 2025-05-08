@@ -1,0 +1,65 @@
+{
+  "StartAt": "Linked-Resource-Cache-Invalidation",
+  "States": {
+    "Linked-Resource-Cache-Invalidation": {
+      "Comment": "To create invalidations for input pages on input countries",
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:##-######-#:#########:function:prod-ielts-web-post-linked-resource-invalidation-v1",
+      "InputPath": "$",
+      "ResultPath": "$.invalidation_objects",
+      "Next": "Wait-For-1-Min"
+    },
+    "Wait-For-1-Min": {
+      "Comment": "To Wait till invalidation completes",
+      "Type": "Wait",
+      "Seconds": 33,
+      "Next": "Check-Invalidation-Status"
+    },
+    "Check-Invalidation-Status": {
+      "Comment": "Lambda to check invalidation status in the given distribution",
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:##-######-#:#########:function:prod-ielts-web-post-linked-resource-invalidation-status-v1",
+      "InputPath": "$",
+      "ResultPath": "$.invalidation_details",
+      "Next": "Check-Status-Choice"
+    },
+    "Check-Status-Choice": {
+      "Comment": "To act based on invalidation status",
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.invalidation_details.invalidation_batch_status",
+          "StringEquals": "no",
+          "Next": "Wait-For-1-Min"
+        },
+        {
+          "Variable": "$.invalidation_details.invalidation_batch_status",
+          "StringEquals": "yes",
+          "Next": "Check-Invalidation-Completion"
+        }
+      ],
+      "Default": "Check-Invalidation-Completion"
+    },
+    "Check-Invalidation-Completion": {
+      "Comment": "To check if all invalidations are completed",
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.invalidation_details.invalidation_list_status",
+          "StringEquals": "no",
+          "Next": "Linked-Resource-Cache-Invalidation"
+        },
+        {
+          "Variable": "$.invalidation_details.invalidation_list_status",
+          "StringEquals": "yes",
+          "Next": "EndInvalidation"
+        }
+      ],
+      "Default": "Linked-Resource-Cache-Invalidation"
+    },
+    "EndInvalidation": {
+      "Type": "Succeed"
+    }
+  },
+  "TimeoutSeconds": 2700
+}
